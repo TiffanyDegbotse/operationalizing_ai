@@ -1345,3 +1345,35 @@ def get_forecast_heatmap(hours_ahead: int = 0) -> dict:
         "hours_ahead": hours_ahead,
         "is_forecast": True,
     }
+
+import logging
+import sys
+from pathlib import Path as _Path
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
+CORRUPTED_DATA_PATH = _Path(__file__).parent.parent / "data" / "demand_enriched_corrupted.parquet"
+
+def check_and_log_data_quality():
+    """
+    Run validation on incoming data and log any issues found.
+    The API continues running regardless of validation outcome.
+    Call this at startup so operators are immediately aware of data problems.
+    """
+    try:
+        sys.path.insert(0, str(_Path(__file__).parent.parent))
+        from validation.check_data_quality import DataQualityValidator
+        df = pd.read_parquet(CORRUPTED_DATA_PATH)
+        validator = DataQualityValidator()
+        result = validator.validate(df)
+        if not result['is_valid']:
+            logger.warning(f"Data quality issues detected: {result['num_issues']} issue(s) found.")
+            for issue in result['issues']:
+                logger.warning(f"  [{issue['severity'].upper()}] {issue['type']}: {issue['description']}")
+        else:
+            logger.info("Data quality check passed - no issues found.")
+    except Exception as e:
+        logger.error(f"Data quality check failed to run: {e}")
+
+check_and_log_data_quality()

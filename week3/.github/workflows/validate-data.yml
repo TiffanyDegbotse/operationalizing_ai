@@ -1,8 +1,8 @@
-name: Data Quality Check
+﻿name: Data Quality Check
 
 on:
   schedule:
-    - cron: '0 * * * *'  # TODO: Choose your frequency (15min? hourly? daily?)
+    - cron: '0 * * * *'
   push:
     branches: [main]
     paths:
@@ -29,20 +29,15 @@ jobs:
         id: validate
         run: |
           cd week3
-          # TODO: Implement this
-          # - Load and split the corrupted parquet (pre/post Jan 16)
-          # - Run your validation checks
-          # - Report findings
-          # - Exit with error if validation fails
-          python3 -m validation.check_data_quality
+          python -m validation.check_data_quality
 
       - name: Block deployment if validation fails
         if: failure()
         run: |
-          echo "Data validation FAILED"
-          echo "Check logs above for issues"
+          echo "Data validation FAILED - blocking deployment"
+          echo "Check logs above for issues found in corrupted data"
           exit 1
 
       - name: Validation passed
         if: success()
-        run: echo "Data quality validation passed"
+        run: echo "Data quality validation passed - safe to deploy"
