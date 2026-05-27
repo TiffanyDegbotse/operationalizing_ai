@@ -4,7 +4,11 @@
 
 1. Check [REQUIREMENTS.md](REQUIREMENTS.md) for system setup
 2. Read [READING.md](READING.md) for operational context
+<<<<<<< HEAD
 3. All files are committed directly (no Git LFS needed for this week)
+=======
+3. If files appear truncated (Git LFS pointers), run: `git lfs pull`
+>>>>>>> upstream/main
 
 ## Assignment
 
@@ -26,7 +30,11 @@ week2/
 ├── data/
 │   └── demand_enriched.parquet (pre-loaded, you upload to GCS)
 ├── model/
+<<<<<<< HEAD
 │   └── demand_api_model.joblib (pre-trained LightGBM)
+=======
+│   └── lgbm_demand_model.txt (pre-trained LightGBM)
+>>>>>>> upstream/main
 ├── starter/           (you edit these files)
 │   ├── Dockerfile
 │   ├── k8s/           (deployment.yaml, service.yaml, configmap.yaml)
@@ -93,7 +101,11 @@ gcloud services enable compute.googleapis.com
 gcloud services enable storage-api.googleapis.com
 ```
 
+<<<<<<< HEAD
 ## Step 5: Create GCS Bucket
+=======
+## Step 4: Create GCS Bucket
+>>>>>>> upstream/main
 
 This bucket stores your model and data (what the deployed pods will read):
 
@@ -104,14 +116,22 @@ gsutil mb gs://ops-ai-[YOUR-NAME]-data
 gsutil ls
 ```
 
+<<<<<<< HEAD
 ## Step 6: Upload Data and Model
+=======
+## Step 5: Upload Data and Model
+>>>>>>> upstream/main
 
 Copy provided data/model to your bucket:
 
 ```bash
 # From repo root:
 gsutil cp week2/data/demand_enriched.parquet gs://ops-ai-[YOUR-NAME]-data/
+<<<<<<< HEAD
 gsutil cp week2/model/demand_api_model.joblib gs://ops-ai-[YOUR-NAME]-data/
+=======
+gsutil cp week2/model/lgbm_demand_model.txt gs://ops-ai-[YOUR-NAME]-data/
+>>>>>>> upstream/main
 gsutil cp week2/backend/zone_hour_avg_fare.parquet gs://ops-ai-[YOUR-NAME]-data/
 gsutil cp week2/backend/taxi_zones.geojson gs://ops-ai-[YOUR-NAME]-data/
 
@@ -121,7 +141,11 @@ gsutil ls -lh gs://ops-ai-[YOUR-NAME]-data/
 
 Your bucket now contains all files that the API pods will download on startup.
 
+<<<<<<< HEAD
 ## Step 7: Create Artifact Registry
+=======
+## Step 6: Create Artifact Registry
+>>>>>>> upstream/main
 
 For Docker image storage (similar to Docker Hub):
 
@@ -134,7 +158,11 @@ gcloud artifacts repositories create docker-repo \
 gcloud artifacts repositories list
 ```
 
+<<<<<<< HEAD
 ## Step 8: Create Service Account for GitHub Actions & GKE
+=======
+## Step 7: Create Service Account for GitHub Actions & GKE
+>>>>>>> upstream/main
 
 GitHub needs credentials to deploy to your GCP project, and GKE needs credentials to pull Docker images:
 
@@ -161,7 +189,11 @@ gcloud projects add-iam-policy-binding ops-ai-[YOUR-NAME] \
   --role=roles/artifactregistry.reader
 ```
 
+<<<<<<< HEAD
 ## Step 9: Create and Download Service Account Key
+=======
+## Step 8: Create and Download Service Account Key
+>>>>>>> upstream/main
 
 This key allows GitHub to authenticate:
 
@@ -235,6 +267,22 @@ kubectl get secrets artifact-registry-secret
 rm /tmp/gke-key.json
 ```
 
+<<<<<<< HEAD
+=======
+## Step 1b: Create GCS Service Account Secret
+
+The init container in the deployment needs to authenticate to GCS to download model files. Create a generic secret from the service account key:
+
+```bash
+# Create generic secret for GCS access (init container uses this)
+kubectl create secret generic gcs-sa-key \
+  --from-file=key.json=key.json
+
+# Verify secret was created
+kubectl get secrets gcs-sa-key
+```
+
+>>>>>>> upstream/main
 ## Step 2: Edit ConfigMap
 
 File: `week2/starter/k8s/configmap.yaml`
@@ -252,10 +300,17 @@ data:
 
 File: `week2/starter/k8s/deployment.yaml`
 
+<<<<<<< HEAD
 Replace `[YOUR-NAME]` in the image path:
 
 ```yaml
 image: us-central1-docker.pkg.dev/[YOUR-NAME]/docker-repo/demand-api:latest
+=======
+Replace `[YOUR-NAME]` in the image path (note the `ops-ai-` prefix):
+
+```yaml
+image: us-central1-docker.pkg.dev/ops-ai-[YOUR-NAME]/docker-repo/demand-api:latest
+>>>>>>> upstream/main
 ```
 
 Fill in the TODO values:
@@ -267,7 +322,11 @@ Fill in the TODO values:
 - `cpu/memory limits`: 1000m / 3Gi
 - Probe timings (initialDelaySeconds, periodSeconds, failureThreshold)
 
+<<<<<<< HEAD
 ## Step 3b: Edit Service Manifest
+=======
+## Step 4: Edit Service Manifest
+>>>>>>> upstream/main
 
 File: `week2/starter/k8s/service.yaml`
 
@@ -278,7 +337,11 @@ Fill in the TODO values:
 - `port`: 80 (external port)
 - `targetPort`: 8000 (container port)
 
+<<<<<<< HEAD
 ## Step 4: Update CD Workflow
+=======
+## Step 5: Update CD Workflow
+>>>>>>> upstream/main
 
 File: `week2/starter/.github/workflows/cd.yml`
 
@@ -507,7 +570,11 @@ Submit on Canvas:
 **Error: "pip install failed" or "No module named X"**
 
 - Solution: Check `week2/backend/requirements.txt` includes all imports from data.py
+<<<<<<< HEAD
 - Required: `requests`, `joblib` (others are included automatically)
+=======
+- Required: `requests`, `lightgbm` (others are included automatically)
+>>>>>>> upstream/main
 
 ## Kubernetes Deployment Errors
 
