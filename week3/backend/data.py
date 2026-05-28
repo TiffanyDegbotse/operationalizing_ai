@@ -218,7 +218,7 @@ def _get_zone_hour_fare(zone_id: int, hour: int) -> float:
     return max(5.0, min(100.0, fare))  # Clamp to reasonable range
 
 
-# ── Zone Coordinates (for real drive time calculation) ────────────────────────
+# Zone Coordinates (for real drive time calculation)
 
 
 def _load_zone_coordinates():
@@ -251,7 +251,7 @@ def _load_zone_coordinates():
 _zone_coords = _load_zone_coordinates()
 
 
-# ── Drive Time Calculation (OSRM - Open Source Routing Machine) ──────────────
+# Drive Time Calculation (OSRM - Open Source Routing Machine) 
 
 
 @lru_cache(maxsize=500)
@@ -297,7 +297,7 @@ def _get_drive_time(from_zone: int, to_zone: int) -> int:
     return min(45, drive_time)  # cap at 45 mins
 
 
-# ── Volatility Cache (Confidence/Stability Signals) ──────────────────────────
+# Volatility Cache (Confidence/Stability Signals)
 
 
 def _compute_zone_volatility():
@@ -331,7 +331,7 @@ def _compute_zone_volatility():
 _zone_volatility = _compute_zone_volatility()
 
 
-# ── Unmet Demand Baselines (Data-Driven) ────────────────────────────────────
+# Unmet Demand Baselines (Data-Driven)
 
 
 def _compute_zone_unmet_demand_baseline():
@@ -362,7 +362,7 @@ def _compute_zone_unmet_demand_baseline():
 _zone_unmet_baselines = _compute_zone_unmet_demand_baseline()
 
 
-# ── Synthetic Live Data Generation ──────────────────────────────────────────
+# Synthetic Live Data Generation 
 
 
 def _generate_synthetic_current_demand(hour: int, dow: int) -> dict:
@@ -425,7 +425,7 @@ def get_synthetic_current_demand(hour: int, dow: int, date: str = None) -> dict:
     }
 
 
-# ── LightGBM Forecasting ─────────────────────────────────────────────────────
+# LightGBM Forecasting
 
 
 def _compute_temporal_features(time_bucket: pd.Timestamp) -> dict:
@@ -1219,7 +1219,7 @@ def get_operator_zones(
         # Get zone metadata
         zone_info = _zone_map.get(zone_id, {})
 
-        # === UNMET DEMAND (DATA-DRIVEN) ===
+        # UNMET DEMAND (DATA-DRIVEN)
         # Use 95th percentile of historical demand as the stress threshold
         # Demand above that indicates the zone is beyond "normal peak"
         p95_baseline = _zone_unmet_baselines.get(zone_id, 0)
