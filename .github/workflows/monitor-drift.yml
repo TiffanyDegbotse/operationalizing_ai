@@ -41,25 +41,12 @@ jobs:
           python detect_drift.py
         continue-on-error: true
 
-      - name: Upload metrics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: monitoring-metrics
-          path: week4/metrics-*.json
-
-      - name: Create alert if drift detected
+      - name: Alert if drift detected
         if: steps.drift.outcome == 'failure' || steps.metrics.outcome == 'failure'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Drift detected in monitoring',
-              body: 'Monitoring workflow detected data or concept drift. Check logs for details.',
-              labels: ['drift-alert']
-            })
+        run: |
+          echo "DRIFT ALERT - Drift or metric threshold breach detected"
+          echo "In production this would notify ops via Slack, PagerDuty, or email"
+          echo "Recommend reviewing logs and triggering retraining pipeline"
 
       - name: Monitoring complete
         run: echo "Drift monitoring complete - check logs for findings"
