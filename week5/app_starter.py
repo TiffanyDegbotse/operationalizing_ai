@@ -62,7 +62,8 @@ class PolicySearchTool(Tool):
     def execute(self, query: str = None, topic: str = None, keyword: str = None, limit: int = 5, **kwargs) -> str:
         try:
             search_term = (query or topic or keyword or "").replace("_", " ").replace("-", " ")
-            matches = [doc for doc in self.documents if search_term.lower() in doc["content"].lower() or search_term.lower() in doc["title"].lower()]
+            terms = search_term.lower().split()
+            matches = [doc for doc in self.documents if any(t in doc["content"].lower() or t in doc["title"].lower() for t in terms)]
             if not matches:
                 return f"No documents found matching: {search_term}"
             results = []
